@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { handleWebpageConfiguration } from "./webPageConfiguration.js";
 document.addEventListener("DOMContentLoaded", () => {
     let productId = handleWebpageConfiguration();
+    const editButton = document.getElementsByClassName("edit-current-product")[0];
+    editButton.href = `./addProducts.html?productID=${productId}`;
     handleShowProduct(productId);
 });
 function handleShowProduct(productId) {

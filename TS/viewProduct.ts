@@ -2,7 +2,10 @@ import { handleWebpageConfiguration } from "./webPageConfiguration.js";
 import { ProductBody } from "./addProducts.js";
 document.addEventListener("DOMContentLoaded", () => {
   let productId: string = handleWebpageConfiguration();
-
+  const editButton = document.getElementsByClassName(
+    "edit-current-product"
+  )[0]! as HTMLAnchorElement;
+  editButton.href = `./addProducts.html?productID=${productId}`;
   handleShowProduct(productId);
 });
 

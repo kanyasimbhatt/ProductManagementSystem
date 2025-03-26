@@ -21,6 +21,7 @@ class Products {
         };
         let productID = handleWebpageConfiguration();
         this.pageInfo = !productID ? "Add" : "Edit";
+        console.log(productID);
         //separate configuration for each type of page
         this.pageInfo === "Add"
             ? this.configureAdd()
