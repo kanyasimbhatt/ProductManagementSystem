@@ -1,0 +1,43 @@
+import { handleWebpageConfiguration } from "./webPageConfiguration.js";
+import { ProductBody } from "./addProducts.js";
+document.addEventListener("DOMContentLoaded", () => {
+  let productId: string = handleWebpageConfiguration();
+
+  handleShowProduct(productId);
+});
+
+async function handleShowProduct(productId: string) {
+  let ProductToDisplay: ProductBody = {
+    id: "",
+    title: "",
+    description: "",
+    price: 0,
+    image: "",
+  };
+
+  await fetch(`http://localhost:3000/products/${productId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      ProductToDisplay = data;
+    });
+
+  const displayImageElement = document.getElementsByClassName(
+    "product-image"
+  )[0]! as HTMLImageElement;
+
+  const displayTitleElement = document.getElementsByClassName(
+    "product-title"
+  )[0]! as HTMLElement;
+
+  const displayPriceElement = document.getElementsByClassName(
+    "product-price"
+  )[0]! as HTMLElement;
+  const displayDescriptionElement = document.getElementsByClassName(
+    "product-description"
+  )[0]! as HTMLElement;
+
+  displayImageElement.src = ProductToDisplay.image;
+  displayTitleElement.textContent = ProductToDisplay.title;
+  displayDescriptionElement.textContent = ProductToDisplay.description;
+  displayPriceElement.textContent = `${ProductToDisplay.price}`;
+}

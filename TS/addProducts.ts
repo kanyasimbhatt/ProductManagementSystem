@@ -1,6 +1,6 @@
 import { log } from "console";
 import validate from "../../../../node_modules/uuid/dist/cjs/validate";
-
+import { handleWebpageConfiguration } from "./webPageConfiguration.js";
 export interface ProductBody {
   id: string;
   title: string;
@@ -60,13 +60,8 @@ class Products {
 
   constructor() {
     //checking if the page is to work like edit or add
-    let currentURL = document.URL;
-    const searchParams = new URLSearchParams(currentURL);
-    let productID: string = "";
-    let editedImageURL = "";
-    for (const p of searchParams) {
-      productID = p[1];
-    }
+
+    let productID: string = handleWebpageConfiguration();
 
     this.pageInfo = !productID ? "Add" : "Edit";
 

@@ -1,3 +1,4 @@
+import { handleWebpageConfiguration } from "./webPageConfiguration.js";
 const htmlElements = {
     productTitleElement: document.getElementsByClassName("product-title")[0],
     productDescriptionElement: document.getElementsByClassName("product-description")[0],
@@ -9,6 +10,7 @@ const htmlElements = {
 };
 class Products {
     constructor() {
+        //checking if the page is to work like edit or add
         this.imageReaderResult = "";
         this.data = {
             id: "",
@@ -17,14 +19,7 @@ class Products {
             price: 0,
             image: "",
         };
-        //checking if the page is to work like edit or add
-        let currentURL = document.URL;
-        const searchParams = new URLSearchParams(currentURL);
-        let productID = "";
-        let editedImageURL = "";
-        for (const p of searchParams) {
-            productID = p[1];
-        }
+        let productID = handleWebpageConfiguration();
         this.pageInfo = !productID ? "Add" : "Edit";
         //separate configuration for each type of page
         this.pageInfo === "Add"
@@ -137,4 +132,3 @@ class Products {
 document.addEventListener("DOMContentLoaded", () => {
     new Products();
 });
-export {};
