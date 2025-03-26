@@ -51,6 +51,21 @@ class ViewProducts {
             `;
             });
             productDisplayElement.innerHTML += htmlcode;
+            document.querySelectorAll(".delete-product-button").forEach((element) => {
+                element.addEventListener("click", (event) => {
+                    if ("id" in event.target)
+                        this.deleteProduct(event.target.id);
+                });
+            });
+        });
+    }
+    deleteProduct(productId) {
+        let productToDeleteId = productId;
+        fetch(`http://localhost:3000/products/${productToDeleteId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
     }
 }
