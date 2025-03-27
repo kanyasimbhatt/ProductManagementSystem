@@ -8,13 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class ViewProducts {
-    constructor() {
-        this.viewAllProducts();
+    constructor(allProducts) {
+        this.viewAllProducts(allProducts);
+        document
+            .getElementsByClassName("sort-by-name")[0]
+            .addEventListener("click", () => {
+            this.sortByName();
+        });
+        document
+            .getElementsByClassName("sort-by-price")[0]
+            .addEventListener("click", () => {
+            this.sortByPrice();
+        });
     }
-    viewAllProducts() {
+    sortByPrice() {
         return __awaiter(this, void 0, void 0, function* () {
-            const productDisplayElement = document.getElementsByClassName("all-products")[0];
-            let allProducts = [];
+            let productArray = [];
             yield fetch("http://localhost:3000/products", {
                 headers: {
                     "Content-Type": "application/json",
@@ -22,8 +31,31 @@ class ViewProducts {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                allProducts = data;
+                productArray = data;
             });
+            productArray = productArray.sort((a, b) => a.price - b.price);
+            this.viewAllProducts(productArray);
+        });
+    }
+    sortByName() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let productArray = [];
+            yield fetch("http://localhost:3000/products", {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                productArray = data;
+            });
+            productArray = productArray.sort((a, b) => a.title.localeCompare(b.title));
+            this.viewAllProducts(productArray);
+        });
+    }
+    viewAllProducts(allProducts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const productDisplayElement = document.getElementsByClassName("all-products")[0];
             if (allProducts.length === 0) {
                 productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
                 return;
@@ -50,7 +82,7 @@ class ViewProducts {
         </a>
             `;
             });
-            productDisplayElement.innerHTML += htmlcode;
+            productDisplayElement.innerHTML = htmlcode;
             document.querySelectorAll(".delete-product-button").forEach((element) => {
                 element.addEventListener("click", (event) => {
                     if ("id" in event.target)
@@ -69,7 +101,17 @@ class ViewProducts {
         });
     }
 }
-document.addEventListener("DOMContentLoaded", () => {
-    new ViewProducts();
-});
+document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
+    let allProducts = [];
+    yield fetch("http://localhost:3000/products", {
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+        allProducts = data;
+    });
+    new ViewProducts(allProducts);
+}));
 export {};

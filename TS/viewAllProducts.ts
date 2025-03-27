@@ -1,16 +1,23 @@
 import { ProductBody } from "./addProducts.js";
 
 class ViewProducts {
-  constructor() {
-    this.viewAllProducts();
+  constructor(allProducts: ProductBody[]) {
+    this.viewAllProducts(allProducts);
+    document
+      .getElementsByClassName("sort-by-name")[0]
+      .addEventListener("click", () => {
+        this.sortByName();
+      });
+
+    document
+      .getElementsByClassName("sort-by-price")[0]
+      .addEventListener("click", () => {
+        this.sortByPrice();
+      });
   }
 
-  async viewAllProducts() {
-    const productDisplayElement = document.getElementsByClassName(
-      "all-products"
-    )[0]! as HTMLElement;
-    let allProducts: object[] = [];
-
+  async sortByPrice() {
+    let productArray: ProductBody[] = [];
     await fetch("http://localhost:3000/products", {
       headers: {
         "Content-Type": "application/json",
@@ -18,8 +25,33 @@ class ViewProducts {
     })
       .then((response) => response.json())
       .then((data) => {
-        allProducts = data;
+        productArray = data;
       });
+
+    productArray = productArray.sort((a, b) => a.price - b.price);
+    this.viewAllProducts(productArray);
+  }
+
+  async sortByName() {
+    let productArray: ProductBody[] = [];
+    await fetch("http://localhost:3000/products", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        productArray = data;
+      });
+
+    productArray = productArray.sort((a, b) => a.title.localeCompare(b.title));
+    this.viewAllProducts(productArray);
+  }
+
+  async viewAllProducts(allProducts: ProductBody[]) {
+    const productDisplayElement = document.getElementsByClassName(
+      "all-products"
+    )[0]! as HTMLElement;
 
     if (allProducts.length === 0) {
       productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
@@ -58,7 +90,7 @@ class ViewProducts {
             `;
     });
 
-    productDisplayElement.innerHTML += htmlcode;
+    productDisplayElement.innerHTML = htmlcode;
 
     document.querySelectorAll(".delete-product-button").forEach((element) => {
       element.addEventListener("click", (event) => {
@@ -80,6 +112,17 @@ class ViewProducts {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  new ViewProducts();
+document.addEventListener("DOMContentLoaded", async () => {
+  let allProducts: ProductBody[] = [];
+
+  await fetch("http://localhost:3000/products", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      allProducts = data;
+    });
+  new ViewProducts(allProducts);
 });

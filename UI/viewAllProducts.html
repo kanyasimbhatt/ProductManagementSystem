@@ -55,8 +55,10 @@
                 Sort By
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Name</a></li>
-                <li><a class="dropdown-item" href="#">Price</a></li>
+                <li><a class="dropdown-item sort-by-name" href="#">Name</a></li>
+                <li>
+                  <a class="dropdown-item sort-by-price" href="#">Price</a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -79,6 +81,9 @@
     <div
       class="all-products d-flex flex-wrap gap-3 overflow-auto justify-content-center justify-content-lg-start flex-grow-1 mt-4"
     ></div>
+    <script>
+      var exports = {};
+    </script>
     <script type="module" src="../TS/viewAllProducts.js"></script>
   </body>
 </html>
