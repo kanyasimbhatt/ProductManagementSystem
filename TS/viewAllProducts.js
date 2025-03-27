@@ -45,7 +45,7 @@ class ViewProducts {
         if (searchedInput === "")
             this.viewAllProducts(allProducts);
         allProducts = allProducts.filter((product) => {
-            return product.title.includes(searchedInput);
+            return product.title.toLowerCase().includes(searchedInput.toLowerCase());
         });
         if (allProducts.length === 0) {
             document.getElementsByClassName("all-products")[0].innerHTML =
@@ -114,9 +114,9 @@ class ViewProducts {
                 let productObj = product;
                 htmlcode += `
             <a class = "text-decoration-none text-dark" href = "./viewProduct.html?productID=${productObj[`id`]}">
-              <div class="card mb-2 bg-light shadow-sm" style="width: 18rem">
-              <div style="height: 200px" >
-                <img class="card-img-top" style="height: 200px" src="${productObj["image"]}" alt="Card image cap"></div>
+              <div class="card mb-2 ms-md-5 bg-light shadow-sm" style="width: 18rem">
+              <div class = "card-image-wrapper">
+                <img class="card-img-top" src="${productObj["image"]}" alt="Card image cap"></div>
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
             <h5 class="card-title h-20">${productObj["title"]}</h5>
             <p class="card-text text-center h-20">

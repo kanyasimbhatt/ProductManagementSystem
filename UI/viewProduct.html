@@ -16,7 +16,7 @@
       crossorigin="anonymous"
     ></script>
   </head>
-  <body>
+  <body class="overflow-hidden">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <a class="navbar-brand" href="./viewAllProducts.html"
@@ -66,14 +66,31 @@
       </div>
     </nav>
 
-    <div class="container d-flex gap-md-5">
-      <div>
-        <img class="product-image" src="" alt="display view of the product" />
+    <div
+      class="container d-flex gap-lg-5 vh-100 align-items-center flex-lg-row flex-column gap-0"
+    >
+      <div class="justify-content-lg-start vw-50">
+        <img
+          class="product-image h-lg-100 h-100 w-100"
+          src=""
+          alt="display view of the product"
+        />
       </div>
-      <div>
-        <p class="product-title"></p>
-        <p class="product-price"></p>
-        <p class="product-description"></p>
+      <div
+        class="d-flex gap-5 flex-column ms-lg-5 ms-0 vw-50 justify-content-end"
+      >
+        <div>
+          <h3>Product Title:</h3>
+          <p class="product-title"></p>
+        </div>
+        <div>
+          <h3>Product Price:</h3>
+          <p class="product-price"></p>
+        </div>
+        <div>
+          <h3>Product Description:</h3>
+          <p class="product-description"></p>
+        </div>
       </div>
     </div>
     <script>

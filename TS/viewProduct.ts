@@ -28,6 +28,8 @@ async function handleShowProduct(productId: string) {
     "product-image"
   )[0]! as HTMLImageElement;
 
+  displayImageElement.style.height = "500px";
+
   const displayTitleElement = document.getElementsByClassName(
     "product-title"
   )[0]! as HTMLElement;

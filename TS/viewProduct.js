@@ -29,6 +29,7 @@ function handleShowProduct(productId) {
             ProductToDisplay = data;
         });
         const displayImageElement = document.getElementsByClassName("product-image")[0];
+        displayImageElement.style.height = "500px";
         const displayTitleElement = document.getElementsByClassName("product-title")[0];
         const displayPriceElement = document.getElementsByClassName("product-price")[0];
         const displayDescriptionElement = document.getElementsByClassName("product-description")[0];

@@ -22,7 +22,7 @@ type HtmlElementType = {
 const htmlElements: Readonly<HtmlElementType> = {
   productTitleElement: document.getElementsByClassName(
     "product-title"
-  )[0]! as HTMLInputElement,
+  )[0] as HTMLInputElement,
 
   productDescriptionElement: document.getElementsByClassName(
     "product-description"
@@ -30,13 +30,13 @@ const htmlElements: Readonly<HtmlElementType> = {
 
   productPriceElement: document.getElementsByClassName(
     "product-price"
-  )[0]! as HTMLInputElement,
+  )[0] as HTMLInputElement,
 
-  formTitle: document.getElementsByClassName("form-title")[0]! as HTMLElement,
+  formTitle: document.getElementsByClassName("form-title")[0] as HTMLElement,
 
   addOrEditProductButton: document.getElementsByClassName(
     "add-button"
-  )[0]! as HTMLButtonElement,
+  )[0] as HTMLButtonElement,
 
   previewImage: document.getElementById(
     "img-from-local-storage"
@@ -44,7 +44,7 @@ const htmlElements: Readonly<HtmlElementType> = {
 
   productImageElement: document.getElementsByClassName(
     "product-image"
-  )[0]! as HTMLInputElement,
+  )[0] as HTMLInputElement,
 };
 
 class Products {
@@ -72,15 +72,64 @@ class Products {
       ? this.configureAdd()
       : this.configureEdit(productID);
 
-    document
-      .getElementsByClassName("product-image")[0]
-      .addEventListener("change", (event) => {
-        this.validateAndShowImage(event);
-      });
+    //common elements for image URL and file added by user
+    const productImageElement = document.getElementsByClassName(
+      "product-image"
+    )[0] as HTMLInputElement;
+    const imageURLElement = document.getElementsByClassName(
+      "product-image-URL"
+    )[0] as HTMLInputElement;
+
+    //event listener for when user selects an image from it's own device
+    productImageElement.addEventListener("change", (event) => {
+      this.validateAndShowImage(event);
+
+      if (productImageElement.value !== "") imageURLElement.disabled = true;
+      else imageURLElement.disabled = false;
+    });
+
+    imageURLElement.addEventListener("input", (event) => {
+      this.handleImageURLInput(event, productImageElement);
+    });
+
+    //initial value for all the inputs in form
     htmlElements.productTitleElement.value = "";
     htmlElements.productDescriptionElement.value = "";
     htmlElements.productPriceElement.value = "";
     htmlElements.productImageElement.value = "";
+  }
+
+  isValidImageURL(url: string, callback: Function) {
+    let image = new Image();
+    image.onload = () => callback(true);
+    image.onerror = () => callback(false);
+    image.src = url;
+  }
+
+  handleImageURLInput(event: Event, productImageElement: HTMLInputElement) {
+    let imageURLInput = "";
+    if ("value" in event.target!) {
+      imageURLInput = `${event.target.value}`;
+    } else return;
+
+    if (imageURLInput !== "") {
+      productImageElement.disabled = true;
+    } else {
+      htmlElements.previewImage.style.display = "none";
+      productImageElement.disabled = false;
+      document.getElementsByClassName("validate-image-url")[0].innerHTML = "";
+    }
+    this.isValidImageURL(imageURLInput, (outcome: boolean) => {
+      if (outcome) {
+        this.imageReaderResult = imageURLInput;
+        this.displayPreviewImage();
+        document.getElementsByClassName("validate-image-url")[0].innerHTML = "";
+      } else {
+        document.getElementsByClassName("validate-image-url")[0].innerHTML =
+          "Enter a valid URL";
+        htmlElements.previewImage.style.display = "none";
+      }
+    });
   }
 
   configureAdd() {
@@ -150,7 +199,7 @@ class Products {
     if (!imageFile) {
       const element = document.getElementById(
         "img-from-local-storage"
-      )! as HTMLElement;
+      ) as HTMLElement;
       element.style.display = "none";
       return;
     }
@@ -161,18 +210,14 @@ class Products {
 
       if (
         typeof reader.result === "string" &&
-        reader.result!.includes("image")
+        reader.result.includes("image")
       ) {
         this.imageReaderResult = reader.result;
 
-        htmlElements.previewImage!.src = this.imageReaderResult;
-        htmlElements.previewImage!.style.height = "150px";
-        htmlElements.previewImage!.style.width = "100px";
-        htmlElements.previewImage!.style.display = "block";
-        htmlElements.previewImage!.style.margin = "20px";
+        this.displayPreviewImage();
         validateImageInfo.innerHTML = "";
       } else {
-        htmlElements.previewImage!.style.display = "none";
+        htmlElements.previewImage.style.display = "none";
         validateImageInfo.innerHTML = "Enter a valid image";
       }
     });
@@ -180,6 +225,14 @@ class Products {
     if (imageFile) {
       reader.readAsDataURL(imageFile);
     }
+  }
+
+  displayPreviewImage() {
+    htmlElements.previewImage.src = this.imageReaderResult;
+    htmlElements.previewImage.style.height = "200px";
+
+    htmlElements.previewImage.style.display = "block";
+    htmlElements.previewImage.style.margin = "20px";
   }
 
   editProducts(productID: string) {
