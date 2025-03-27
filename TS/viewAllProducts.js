@@ -16,12 +16,45 @@ class ViewProducts {
             this.sortByName();
         });
         document
-            .getElementsByClassName("sort-by-price")[0]
+            .getElementsByClassName("sort-by-pricelh")[0]
             .addEventListener("click", () => {
-            this.sortByPrice();
+            this.sortByPriceLH();
+        });
+        document
+            .getElementsByClassName("sort-by-pricehl")[0]
+            .addEventListener("click", () => {
+            this.sortByPriceHL();
+        });
+        const searchInputElement = document.getElementsByClassName("search-product-name")[0];
+        searchInputElement.value = "";
+        searchInputElement.addEventListener("input", (event) => {
+            this.debounceSearchProduct(event, allProducts, 300);
         });
     }
-    sortByPrice() {
+    debounceSearchProduct(event, allProducts, timer) {
+        let debounceTimer;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            this.searchProduct(event, allProducts);
+        }, timer);
+    }
+    searchProduct(event, allProducts) {
+        let searchedInput = "";
+        if ("value" in event.target && typeof event.target.value === "string")
+            searchedInput = event.target.value;
+        if (searchedInput === "")
+            this.viewAllProducts(allProducts);
+        allProducts = allProducts.filter((product) => {
+            return product.title.includes(searchedInput);
+        });
+        if (allProducts.length === 0) {
+            document.getElementsByClassName("all-products")[0].innerHTML =
+                "<b> No Products found</b>";
+        }
+        else
+            this.viewAllProducts(allProducts);
+    }
+    sortByPriceLH() {
         return __awaiter(this, void 0, void 0, function* () {
             let productArray = [];
             yield fetch("http://localhost:3000/products", {
@@ -34,6 +67,22 @@ class ViewProducts {
                 productArray = data;
             });
             productArray = productArray.sort((a, b) => a.price - b.price);
+            this.viewAllProducts(productArray);
+        });
+    }
+    sortByPriceHL() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let productArray = [];
+            yield fetch("http://localhost:3000/products", {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                productArray = data;
+            });
+            productArray = productArray.sort((a, b) => b.price - a.price);
             this.viewAllProducts(productArray);
         });
     }
@@ -66,11 +115,12 @@ class ViewProducts {
                 htmlcode += `
             <a class = "text-decoration-none text-dark" href = "./viewProduct.html?productID=${productObj[`id`]}">
               <div class="card mb-2 bg-light shadow-sm" style="width: 18rem">
-                <img class="card-img-top" src="${productObj["image"]}" alt="Card image cap">
+              <div style="height: 200px" >
+                <img class="card-img-top" style="height: 200px" src="${productObj["image"]}" alt="Card image cap"></div>
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
             <h5 class="card-title h-20">${productObj["title"]}</h5>
             <p class="card-text text-center h-20">
-              Price: ${productObj["price"]}&#8377;
+              Price: &#8377;${productObj["price"]}
             </p>
   
                 <div class = "d-flex flex-row gap-5 m-4 h-40">
