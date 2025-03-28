@@ -2,7 +2,12 @@ import { log } from "console";
 import { ProductBody } from "./addProducts";
 
 class ViewProducts {
+  searchInputElement: HTMLInputElement;
+  productDisplayElement: HTMLElement;
   constructor(allProducts: ProductBody[]) {
+    this.productDisplayElement = document.getElementsByClassName(
+      "all-products"
+    )[0]! as HTMLElement;
     this.viewAllProducts(allProducts);
     document
       .getElementsByClassName("sort-by-name")[0]
@@ -22,12 +27,12 @@ class ViewProducts {
         this.sortByPriceHL();
       });
 
-    const searchInputElement = document.getElementsByClassName(
+    this.searchInputElement = document.getElementsByClassName(
       "search-product-name"
     )[0]! as HTMLInputElement;
 
-    searchInputElement.value = "";
-    searchInputElement.addEventListener("input", (event) => {
+    this.searchInputElement.value = "";
+    this.searchInputElement.addEventListener("input", (event) => {
       this.debounceSearchProduct(event, allProducts, 300);
     });
 
@@ -74,15 +79,22 @@ class ViewProducts {
     if ("value" in event.target! && typeof event.target!.value === "string")
       searchedInput = event.target!.value;
 
-    if (searchedInput === "") this.viewAllProducts(allProducts);
+    if (searchedInput === "") {
+      this.productDisplayElement.innerHTML = "";
 
+      this.viewAllProducts(allProducts);
+    }
     allProducts = allProducts.filter((product) => {
       return product.title.toLowerCase().includes(searchedInput.toLowerCase());
     });
     if (allProducts.length === 0) {
       document.getElementsByClassName("all-products")[0].innerHTML =
         "<b> No Products found</b>";
-    } else this.viewAllProducts(allProducts);
+    } else {
+      this.productDisplayElement.innerHTML = "";
+
+      this.viewAllProducts(allProducts);
+    }
   }
 
   async sortByPriceLH() {
@@ -98,6 +110,7 @@ class ViewProducts {
       });
 
     productArray = productArray.sort((a, b) => a.price - b.price);
+    this.productDisplayElement.innerHTML = "";
     this.viewAllProducts(productArray);
   }
 
@@ -114,6 +127,7 @@ class ViewProducts {
       });
 
     productArray = productArray.sort((a, b) => b.price - a.price);
+    this.productDisplayElement.innerHTML = "";
     this.viewAllProducts(productArray);
   }
 
@@ -130,16 +144,13 @@ class ViewProducts {
       });
 
     productArray = productArray.sort((a, b) => a.title.localeCompare(b.title));
+    this.productDisplayElement.innerHTML = "";
     this.viewAllProducts(productArray);
   }
 
   async viewAllProducts(allProducts: ProductBody[]) {
-    const productDisplayElement = document.getElementsByClassName(
-      "all-products"
-    )[0]! as HTMLElement;
-
     if (allProducts.length === 0) {
-      productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
+      this.productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
       return;
     }
 
@@ -176,7 +187,7 @@ class ViewProducts {
             `;
     });
 
-    productDisplayElement.innerHTML += htmlcode;
+    this.productDisplayElement.innerHTML += htmlcode;
 
     document.querySelectorAll(".delete-product-button").forEach((element) => {
       element.addEventListener("click", (event) => {
