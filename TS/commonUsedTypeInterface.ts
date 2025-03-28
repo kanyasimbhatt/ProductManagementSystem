@@ -23,6 +23,7 @@ type HtmlElementType = {
   displayTitleElement: HTMLElement;
   displayPriceElement: HTMLElement;
   displayDescriptionElement: HTMLElement;
+  editButton: HTMLAnchorElement;
 };
 
 export const htmlElements: Readonly<HtmlElementType> = {
@@ -80,4 +81,7 @@ export const htmlElements: Readonly<HtmlElementType> = {
   displayDescriptionElement: document.getElementsByClassName(
     "product-description"
   )[0] as HTMLElement,
+  editButton: document.getElementsByClassName(
+    "edit-current-product"
+  )[0] as HTMLAnchorElement,
 };

@@ -1,5 +1,5 @@
-import { log } from "console";
 import { ProductBody, htmlElements } from "./commonUsedTypeInterface";
+import { getRequestDataFromAPI } from "./getDataFromAPI";
 
 class ViewProducts {
   constructor(allProducts: ProductBody[]) {
@@ -35,22 +35,13 @@ class ViewProducts {
     const pageHeight = document.documentElement.scrollHeight;
 
     if (scrollPosition >= pageHeight - 300) {
-      let response = await fetch(
-        "https://json-server-backend-for-crud-application.onrender.com/products",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) {
-        console.log("data not fetched");
-        return;
+      try {
+        const result = await getRequestDataFromAPI();
+
+        this.viewAllProducts(result);
+      } catch (err) {
+        console.log(err);
       }
-
-      const result = await response.json();
-
-      this.viewAllProducts(result);
     }
   }
 
@@ -71,8 +62,8 @@ class ViewProducts {
     console.log("hello");
     let searchedInput: string = "";
 
-    if ("value" in event.target! && typeof event.target!.value === "string")
-      searchedInput = event.target!.value;
+    if ("value" in event.target! && typeof event.target.value === "string")
+      searchedInput = event.target.value;
 
     if (searchedInput === "") {
       htmlElements.productDisplayElement.innerHTML = "";
@@ -94,18 +85,13 @@ class ViewProducts {
 
   async sortByPriceLH() {
     let productArray: ProductBody[] = [];
-    await fetch(
-      "https://json-server-backend-for-crud-application.onrender.com/products",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        productArray = data;
-      });
+    try {
+      const data = await getRequestDataFromAPI();
+
+      productArray = data;
+    } catch (err) {
+      console.log(err);
+    }
 
     productArray = productArray.sort((a, b) => a.price - b.price);
     htmlElements.productDisplayElement.innerHTML = "";
@@ -114,19 +100,13 @@ class ViewProducts {
 
   async sortByPriceHL() {
     let productArray: ProductBody[] = [];
-    await fetch(
-      "https://json-server-backend-for-crud-application.onrender.com/products",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        productArray = data;
-      });
+    try {
+      const data = await getRequestDataFromAPI();
 
+      productArray = data;
+    } catch (err) {
+      console.log(err);
+    }
     productArray = productArray.sort((a, b) => b.price - a.price);
     htmlElements.productDisplayElement.innerHTML = "";
     this.viewAllProducts(productArray);
@@ -134,18 +114,12 @@ class ViewProducts {
 
   async sortByName() {
     let productArray: ProductBody[] = [];
-    await fetch(
-      "https://json-server-backend-for-crud-application.onrender.com/products",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        productArray = data;
-      });
+    try {
+      const data = await getRequestDataFromAPI();
+      productArray = data;
+    } catch (err) {
+      console.log(err);
+    }
 
     productArray = productArray.sort((a, b) => a.title.localeCompare(b.title));
     htmlElements.productDisplayElement.innerHTML = "";
@@ -160,7 +134,7 @@ class ViewProducts {
 
     let htmlcode = "";
     allProducts.forEach((product) => {
-      let productObj = product as ProductBody;
+      let productObj: ProductBody = product;
 
       htmlcode += `
             <a class = "text-decoration-none text-dark" href = "./viewProduct.html?productID=${
@@ -196,23 +170,30 @@ class ViewProducts {
     document.querySelectorAll(".delete-product-button").forEach((element) => {
       element.addEventListener("click", (event) => {
         if ("id" in event.target!)
-          this.deleteProduct(event.target!.id as string);
+          this.deleteProduct(event.target.id as string);
       });
     });
   }
 
-  deleteProduct(productId: string) {
+  async deleteProduct(productId: string) {
     let productToDeleteId: string = productId;
+    try {
+      const response = await fetch(
+        `https://json-server-backend-for-crud-application.onrender.com/products/${productToDeleteId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    fetch(
-      `https://json-server-backend-for-crud-application.onrender.com/products/${productToDeleteId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      if (!response.ok) {
+        throw new Error("failed to delete resource");
       }
-    );
+    } catch (err) {
+      console.log(err);
+    }
 
     document.location.href = "./viewAllProducts.html";
   }
@@ -221,17 +202,12 @@ class ViewProducts {
 document.addEventListener("DOMContentLoaded", async () => {
   let allProducts: ProductBody[] = [];
 
-  await fetch(
-    "https://json-server-backend-for-crud-application.onrender.com/products",
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      allProducts = data;
-    });
+  try {
+    const data = await getRequestDataFromAPI();
+
+    allProducts = data;
+  } catch (err) {
+    console.log(err);
+  }
   new ViewProducts(allProducts);
 });

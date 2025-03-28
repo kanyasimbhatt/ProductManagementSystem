@@ -1,11 +1,9 @@
 import { handleWebpageConfiguration } from "./webPageConfiguration";
 import { ProductBody, htmlElements } from "./commonUsedTypeInterface";
+import { getSingleProductBasedOnId } from "./getDataFromAPI";
 document.addEventListener("DOMContentLoaded", () => {
   let productId: string = handleWebpageConfiguration();
-  const editButton = document.getElementsByClassName(
-    "edit-current-product"
-  )[0]! as HTMLAnchorElement;
-  editButton.href = `./addProducts.html?productID=${productId}`;
+  htmlElements.editButton.href = `./addProducts.html?productID=${productId}`;
   handleShowProduct(productId);
 });
 
@@ -17,14 +15,13 @@ async function handleShowProduct(productId: string) {
     price: 0,
     image: "",
   };
+  try {
+    const data: ProductBody = await getSingleProductBasedOnId(productId);
 
-  await fetch(
-    `https://json-server-backend-for-crud-application.onrender.com/products/${productId}`
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      ProductToDisplay = data;
-    });
+    ProductToDisplay = data;
+  } catch (err) {
+    console.log(err);
+  }
 
   htmlElements.displayImageElement.style.height = "500px";
 

@@ -1,5 +1,6 @@
 import { handleWebpageConfiguration } from "./webPageConfiguration";
 import { ProductBody, htmlElements } from "./commonUsedTypeInterface";
+import { getSingleProductBasedOnId } from "./getDataFromAPI";
 
 class Products {
   imageReaderResult: string = "";
@@ -101,26 +102,26 @@ class Products {
 
     htmlElements.formTitle.textContent = "Edit Products";
     htmlElements.addOrEditProductButton.textContent = "Apply Changes";
+    try {
+      let data: ProductBody = await getSingleProductBasedOnId(productID);
+      let productObj = data;
+      this.data = productObj;
+      this.fillFormContentForEdit(productObj);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-    await fetch(
-      `https://json-server-backend-for-crud-application.onrender.com/products/${productID}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        let productObj = data as ProductBody;
-        this.data = productObj;
+  fillFormContentForEdit(productObj: ProductBody) {
+    htmlElements.productTitleElement.value = productObj.title;
+    htmlElements.productDescriptionElement.value = productObj.description;
+    htmlElements.productPriceElement.value = `${productObj.price}`;
+    htmlElements.previewImage.src = productObj.image;
+    htmlElements.previewImage.style.display = "block";
 
-        htmlElements.productTitleElement.value = productObj.title;
-        htmlElements.productDescriptionElement.value = productObj.description;
-        htmlElements.productPriceElement.value = `${productObj.price}`;
-        htmlElements.previewImage.src = productObj.image;
-        htmlElements.previewImage.style.display = "block";
-
-        if (!productObj.image.includes("image")) {
-          htmlElements.productImageURL.value = productObj.image;
-        }
-      })
-      .catch((error) => console.log(error));
+    if (!productObj.image.includes("image")) {
+      htmlElements.productImageURL.value = productObj.image;
+    }
   }
 
   async addProducts() {
@@ -134,7 +135,7 @@ class Products {
         "https://mmi-global.com/wp-content/uploads/2020/05/default-product-image.jpg",
     };
 
-    const response = await fetch(
+    await fetch(
       "https://json-server-backend-for-crud-application.onrender.com/products",
       {
         method: "POST",

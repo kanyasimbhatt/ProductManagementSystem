@@ -181,8 +181,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel UI/viewAllProducts.html",
-    "build": "parcel build UI/viewAllProducts.html",
+    "dev": "parcel UI/viewAllProducts.html UI/viewProduct.html",
+    "build": "parcel build UI/viewAllProducts.html UI/viewProduct.html",
     "serve" : "serve -s dist/"
   },
   "repository": {
