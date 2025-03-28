@@ -145,12 +145,9 @@ class Products {
       .addEventListener("submit", (event) => {
         event.preventDefault();
         this.addProducts();
-        document.location.href = "./viewAllProducts.html";
       });
   }
-  newMethod() {
-    console.log("sdfsf");
-  }
+
   async configureEdit(productID: string) {
     document
       .getElementsByClassName("add-edit-product-form")[0]
@@ -158,13 +155,14 @@ class Products {
         event.preventDefault();
 
         this.editProducts(productID);
-        document.location.href = "./viewAllProducts.html";
       });
 
     htmlElements.formTitle.textContent = "Edit Products";
     htmlElements.addOrEditProductButton.textContent = "Apply Changes";
 
-    await fetch(`http://localhost:3000/products/${productID}`)
+    await fetch(
+      `https://json-server-backend-for-crud-application.onrender.com/products/${productID}`
+    )
       .then((response) => response.json())
       .then((data) => {
         let productObj = data as ProductBody;
@@ -183,7 +181,7 @@ class Products {
       .catch((error) => console.log(error));
   }
 
-  addProducts() {
+  async addProducts() {
     let productObj = {
       id: crypto.randomUUID(),
       title: htmlElements.productTitleElement.value,
@@ -194,11 +192,16 @@ class Products {
         "https://mmi-global.com/wp-content/uploads/2020/05/default-product-image.jpg",
     };
 
-    fetch("http://localhost:3000/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(productObj),
-    });
+    const response = await fetch(
+      "https://json-server-backend-for-crud-application.onrender.com/products",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productObj),
+      }
+    );
+
+    document.location.href = "./viewAllProducts.html";
   }
 
   validateAndShowImage(event: Event) {
@@ -243,23 +246,27 @@ class Products {
     htmlElements.previewImage.style.display = "block";
   }
 
-  editProducts(productID: string) {
+  async editProducts(productID: string) {
     console.log(this.data.image);
 
-    fetch(`http://localhost:3000/products/${productID}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: productID,
-        title: htmlElements.productTitleElement.value,
-        description: htmlElements.productDescriptionElement.value,
-        price: +htmlElements.productPriceElement.value,
-        image:
-          htmlElements.previewImage.src ||
-          htmlElements.productImageURL.value ||
-          this.data.image,
-      }),
-    });
+    await fetch(
+      `https://json-server-backend-for-crud-application.onrender.com/products/${productID}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: productID,
+          title: htmlElements.productTitleElement.value,
+          description: htmlElements.productDescriptionElement.value,
+          price: +htmlElements.productPriceElement.value,
+          image:
+            htmlElements.previewImage.src ||
+            htmlElements.productImageURL.value ||
+            this.data.image,
+        }),
+      }
+    );
+    document.location.href = "./viewAllProducts.html";
   }
 }
 

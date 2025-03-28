@@ -18,7 +18,9 @@ async function handleShowProduct(productId: string) {
     image: "",
   };
 
-  await fetch(`http://localhost:3000/products/${productId}`)
+  await fetch(
+    `https://json-server-backend-for-crud-application.onrender.com/products/${productId}`
+  )
     .then((response) => response.json())
     .then((data) => {
       ProductToDisplay = data;
