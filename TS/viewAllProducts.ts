@@ -26,10 +26,11 @@ class ViewProducts {
     htmlElements.searchInputElement.addEventListener("input", (event) => {
       this.debounceSearchProduct(event, allProducts, 1000);
     });
-
+    //added for infinite scrolling
     window.addEventListener("scroll", () => this.handleScroll());
   }
 
+  //added to check if the user has reached to end of the page to induce infinite scrolling
   async handleScroll() {
     const scrollPosition = window.innerHeight + window.scrollY;
     const pageHeight = document.documentElement.scrollHeight;
@@ -45,6 +46,7 @@ class ViewProducts {
     }
   }
 
+  //added to induce debouncing
   debounceSearchProduct(
     event: Event,
     allProducts: ProductBody[],
@@ -58,6 +60,7 @@ class ViewProducts {
     }, timer);
   }
 
+  //added to induce the search functionality
   searchProduct(event: Event, allProducts: ProductBody[]) {
     console.log("hello");
     let searchedInput: string = "";
@@ -83,6 +86,7 @@ class ViewProducts {
     }
   }
 
+  //added to induce sorting functionality
   async sortByPriceLH() {
     let productArray: ProductBody[] = [];
     try {
@@ -126,6 +130,7 @@ class ViewProducts {
     this.viewAllProducts(productArray);
   }
 
+  //added to display the passed products array as set of cards so that user can view them
   async viewAllProducts(allProducts: ProductBody[]) {
     if (allProducts.length === 0) {
       htmlElements.productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
@@ -155,7 +160,7 @@ class ViewProducts {
             <a href="#" id = "${
               productObj["id"]
             }" class="btn btn-warning justify-content-start delete-product-button">Delete</a>
-            <a href="./addProducts.html?productID=${
+            <a href="./addAndEditProducts.html?productID=${
               productObj["id"]
             }" class="btn btn-warning justify-content-end">Edit</a>
             </div>
@@ -175,6 +180,7 @@ class ViewProducts {
     });
   }
 
+  //added to handle delete product functionality
   async deleteProduct(productId: string) {
     let productToDeleteId: string = productId;
     try {
@@ -201,7 +207,7 @@ class ViewProducts {
 
 document.addEventListener("DOMContentLoaded", async () => {
   let allProducts: ProductBody[] = [];
-
+  //added to show initial set of products
   try {
     const data = await getRequestDataFromAPI();
 

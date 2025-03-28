@@ -27,7 +27,6 @@
 
 #### Screenshots:
 
-![screenshot of project](./images/s1.png)
 ![screenshot of project](./images/s2.png)
 ![screenshot of project](./images/s3.png)
 ![screenshot of project](./images/s4.png)

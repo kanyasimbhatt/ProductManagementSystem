@@ -3,10 +3,11 @@ import { ProductBody, htmlElements } from "./commonUsedTypeInterface";
 import { getSingleProductBasedOnId } from "./getDataFromAPI";
 document.addEventListener("DOMContentLoaded", () => {
   let productId: string = handleWebpageConfiguration();
-  htmlElements.editButton.href = `./addProducts.html?productID=${productId}`;
+  htmlElements.editButton.href = `./addAndEditProducts.html?productID=${productId}`;
   handleShowProduct(productId);
 });
 
+//added to show the selected product details by user
 async function handleShowProduct(productId: string) {
   let ProductToDisplay: ProductBody = {
     id: "",

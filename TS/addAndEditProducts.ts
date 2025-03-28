@@ -14,19 +14,15 @@ class Products {
   };
 
   constructor() {
-    //checking if the page is to work like edit or add
-
+    //added to check if the page is to work like edit or add
     let productID: string = handleWebpageConfiguration();
 
     this.pageInfo = !productID ? "Add" : "Edit";
 
-    //separate configuration for each type of page
-
+    //to differentiate between configuration for each type of page
     this.pageInfo === "Add"
       ? this.configureAdd()
       : this.configureEdit(productID);
-
-    //common elements for image URL and file added by user
 
     //event listener for when user selects an image from it's own device
     htmlElements.productImageElement.addEventListener("change", (event) => {
@@ -42,13 +38,14 @@ class Products {
       this.handleImageURLInput(event, htmlElements.productImageElement);
     });
 
-    //initial value for all the inputs in form
+    //added because on page the reload the content of the input page does not get removed
     htmlElements.productTitleElement.value = "";
     htmlElements.productDescriptionElement.value = "";
     htmlElements.productPriceElement.value = "";
     htmlElements.productImageElement.value = "";
   }
 
+  //added to check if the image url added by user is valid or not
   isValidImageURL(url: string, callback: Function) {
     let image = new Image();
     image.onload = () => callback(true);
@@ -56,6 +53,7 @@ class Products {
     image.src = url;
   }
 
+  //added to induce disable functionality between file image and the url plus to handle the scenario where the entered URL is invalid
   handleImageURLInput(event: Event, productImageElement: HTMLInputElement) {
     let imageURLInput = "";
     if ("value" in event.target!) {
@@ -82,6 +80,7 @@ class Products {
     });
   }
 
+  //added to induce basic setup required if the page is to act like add product page
   configureAdd() {
     document
       .getElementsByClassName("add-edit-product-form")[0]
@@ -91,6 +90,7 @@ class Products {
       });
   }
 
+  //added to induce basic setup required if the page is to act like edit product page, like display the product information
   async configureEdit(productID: string) {
     document
       .getElementsByClassName("add-edit-product-form")[0]
@@ -112,6 +112,7 @@ class Products {
     }
   }
 
+  //added to make code less cluttered
   fillFormContentForEdit(productObj: ProductBody) {
     htmlElements.productTitleElement.value = productObj.title;
     htmlElements.productDescriptionElement.value = productObj.description;
@@ -124,6 +125,7 @@ class Products {
     }
   }
 
+  //added to store data in the json file when user wants to add data
   async addProducts() {
     let productObj = {
       id: crypto.randomUUID(),
@@ -147,6 +149,7 @@ class Products {
     document.location.href = "./viewAllProducts.html";
   }
 
+  //added to handle storing and displaying the image file using fileReader when user enters image from its own device
   validateAndShowImage(event: Event) {
     let image = event.target! as HTMLInputElement;
     let imageFile;
@@ -184,11 +187,13 @@ class Products {
     }
   }
 
+  //added to handle viewing the preview image as multiple functions were doing the same
   displayPreviewImage() {
     htmlElements.previewImage.src = this.imageReaderResult;
     htmlElements.previewImage.style.display = "block";
   }
 
+  //added to handle put request when user wants to edit data
   async editProducts(productID: string) {
     console.log(this.data.image);
 
