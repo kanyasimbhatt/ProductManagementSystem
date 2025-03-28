@@ -1,6 +1,4 @@
-import { log } from "console";
-import validate from "../../../../node_modules/uuid/dist/cjs/validate";
-import { handleWebpageConfiguration } from "./webPageConfiguration.js";
+import { handleWebpageConfiguration } from "./webPageConfiguration";
 export interface ProductBody {
   id: string;
   title: string;
@@ -17,6 +15,9 @@ type HtmlElementType = {
   addOrEditProductButton: HTMLButtonElement;
   previewImage: HTMLImageElement;
   productImageElement: HTMLInputElement;
+  productImageURL: HTMLInputElement;
+  imageValidationData: HTMLParagraphElement;
+  urlValidationData: HTMLParagraphElement;
 };
 
 const htmlElements: Readonly<HtmlElementType> = {
@@ -45,6 +46,17 @@ const htmlElements: Readonly<HtmlElementType> = {
   productImageElement: document.getElementsByClassName(
     "product-image"
   )[0] as HTMLInputElement,
+
+  productImageURL: document.getElementsByClassName(
+    "product-image-URL"
+  )[0] as HTMLInputElement,
+
+  imageValidationData: document.getElementsByClassName(
+    "validate-image"
+  )[0] as HTMLParagraphElement,
+  urlValidationData: document.getElementsByClassName(
+    "validate-image-url"
+  )[0] as HTMLParagraphElement,
 };
 
 class Products {
@@ -64,7 +76,6 @@ class Products {
     let productID: string = handleWebpageConfiguration();
 
     this.pageInfo = !productID ? "Add" : "Edit";
-    console.log(productID);
 
     //separate configuration for each type of page
 
@@ -73,23 +84,19 @@ class Products {
       : this.configureEdit(productID);
 
     //common elements for image URL and file added by user
-    const productImageElement = document.getElementsByClassName(
-      "product-image"
-    )[0] as HTMLInputElement;
-    const imageURLElement = document.getElementsByClassName(
-      "product-image-URL"
-    )[0] as HTMLInputElement;
 
     //event listener for when user selects an image from it's own device
-    productImageElement.addEventListener("change", (event) => {
+    htmlElements.productImageElement.addEventListener("change", (event) => {
       this.validateAndShowImage(event);
 
-      if (productImageElement.value !== "") imageURLElement.disabled = true;
-      else imageURLElement.disabled = false;
+      if (htmlElements.productImageElement.value !== "") {
+        htmlElements.productImageURL.disabled = true;
+        htmlElements.urlValidationData.textContent = "";
+      } else htmlElements.productImageURL.disabled = false;
     });
 
-    imageURLElement.addEventListener("input", (event) => {
-      this.handleImageURLInput(event, productImageElement);
+    htmlElements.productImageURL.addEventListener("input", (event) => {
+      this.handleImageURLInput(event, htmlElements.productImageElement);
     });
 
     //initial value for all the inputs in form
@@ -114,10 +121,10 @@ class Products {
 
     if (imageURLInput !== "") {
       productImageElement.disabled = true;
+      htmlElements.imageValidationData.textContent = "";
     } else {
       htmlElements.previewImage.style.display = "none";
       productImageElement.disabled = false;
-      document.getElementsByClassName("validate-image-url")[0].innerHTML = "";
     }
     this.isValidImageURL(imageURLInput, (outcome: boolean) => {
       if (outcome) {
@@ -141,8 +148,10 @@ class Products {
         document.location.href = "./viewAllProducts.html";
       });
   }
-
-  configureEdit(productID: string) {
+  newMethod() {
+    console.log("sdfsf");
+  }
+  async configureEdit(productID: string) {
     document
       .getElementsByClassName("add-edit-product-form")[0]
       .addEventListener("submit", (event) => {
@@ -155,17 +164,21 @@ class Products {
     htmlElements.formTitle.textContent = "Edit Products";
     htmlElements.addOrEditProductButton.textContent = "Apply Changes";
 
-    fetch(`http://localhost:3000/products/${productID}`)
+    await fetch(`http://localhost:3000/products/${productID}`)
       .then((response) => response.json())
       .then((data) => {
         let productObj = data as ProductBody;
         this.data = productObj;
-        console.log(data);
 
         htmlElements.productTitleElement.value = productObj.title;
         htmlElements.productDescriptionElement.value = productObj.description;
         htmlElements.productPriceElement.value = `${productObj.price}`;
         htmlElements.previewImage.src = productObj.image;
+        htmlElements.previewImage.style.display = "block";
+
+        if (!productObj.image.includes("image")) {
+          htmlElements.productImageURL.value = productObj.image;
+        }
       })
       .catch((error) => console.log(error));
   }
@@ -190,17 +203,14 @@ class Products {
 
   validateAndShowImage(event: Event) {
     let image = event.target! as HTMLInputElement;
-    let imageFile: File | null = null;
+    let imageFile;
 
     if ("files" in image && image.files) {
       imageFile = image.files[0];
     }
 
     if (!imageFile) {
-      const element = document.getElementById(
-        "img-from-local-storage"
-      ) as HTMLElement;
-      element.style.display = "none";
+      htmlElements.previewImage.style.display = "none";
       return;
     }
     const reader: FileReader = new FileReader();
@@ -219,6 +229,7 @@ class Products {
       } else {
         htmlElements.previewImage.style.display = "none";
         validateImageInfo.innerHTML = "Enter a valid image";
+        console.log("sent enter valid image");
       }
     });
 
@@ -229,13 +240,12 @@ class Products {
 
   displayPreviewImage() {
     htmlElements.previewImage.src = this.imageReaderResult;
-    htmlElements.previewImage.style.height = "200px";
-
     htmlElements.previewImage.style.display = "block";
-    htmlElements.previewImage.style.margin = "20px";
   }
 
   editProducts(productID: string) {
+    console.log(this.data.image);
+
     fetch(`http://localhost:3000/products/${productID}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -244,7 +254,10 @@ class Products {
         title: htmlElements.productTitleElement.value,
         description: htmlElements.productDescriptionElement.value,
         price: +htmlElements.productPriceElement.value,
-        image: htmlElements.previewImage.src || this.data.image,
+        image:
+          htmlElements.previewImage.src ||
+          htmlElements.productImageURL.value ||
+          this.data.image,
       }),
     });
   }

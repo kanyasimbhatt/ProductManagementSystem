@@ -1,0 +1,7 @@
+.card-image-wrapper {
+  height: 200px;
+}
+
+.card-image-wrapper > img {
+  height: 200px;
+}

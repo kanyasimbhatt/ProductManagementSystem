@@ -1,5 +1,5 @@
-import { handleWebpageConfiguration } from "./webPageConfiguration.js";
-import { ProductBody } from "./addProducts.js";
+import { handleWebpageConfiguration } from "./webPageConfiguration";
+import { ProductBody } from "./addProducts";
 document.addEventListener("DOMContentLoaded", () => {
   let productId: string = handleWebpageConfiguration();
   const editButton = document.getElementsByClassName(

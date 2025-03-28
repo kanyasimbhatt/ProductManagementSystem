@@ -1,4 +1,5 @@
-import { ProductBody } from "./addProducts.js";
+import { log } from "console";
+import { ProductBody } from "./addProducts";
 
 class ViewProducts {
   constructor(allProducts: ProductBody[]) {
@@ -29,6 +30,29 @@ class ViewProducts {
     searchInputElement.addEventListener("input", (event) => {
       this.debounceSearchProduct(event, allProducts, 300);
     });
+
+    window.addEventListener("scroll", () => this.handleScroll());
+  }
+
+  async handleScroll() {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const pageHeight = document.documentElement.scrollHeight;
+
+    if (scrollPosition >= pageHeight - 300) {
+      let response = await fetch("http://localhost:3000/products", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        console.log("data not fetched");
+        return;
+      }
+
+      const result = await response.json();
+
+      this.viewAllProducts(result);
+    }
   }
 
   debounceSearchProduct(
@@ -152,7 +176,7 @@ class ViewProducts {
             `;
     });
 
-    productDisplayElement.innerHTML = htmlcode;
+    productDisplayElement.innerHTML += htmlcode;
 
     document.querySelectorAll(".delete-product-button").forEach((element) => {
       element.addEventListener("click", (event) => {
@@ -171,6 +195,8 @@ class ViewProducts {
         "Content-Type": "application/json",
       },
     });
+
+    document.location.href = "./viewAllProducts.html";
   }
 }
 

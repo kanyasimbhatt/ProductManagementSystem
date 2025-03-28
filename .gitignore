@@ -1,0 +1,6 @@
+dist
+node_modules
+images
+.cache
+.parcel-cache
+.vscode
