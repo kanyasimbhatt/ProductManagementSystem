@@ -18,12 +18,15 @@ type HtmlElementType = {
   imageValidationData: HTMLParagraphElement;
   urlValidationData: HTMLParagraphElement;
   productDisplayElement: HTMLElement;
-  searchInputElement: HTMLInputElement;
+  searchNameElement: HTMLInputElement;
+  searchDescriptionElement: HTMLInputElement;
   displayImageElement: HTMLImageElement;
   displayTitleElement: HTMLElement;
   displayPriceElement: HTMLElement;
   displayDescriptionElement: HTMLElement;
   editButton: HTMLAnchorElement;
+  sortOrderElement: HTMLSelectElement;
+  sortByElement: HTMLSelectElement;
 };
 
 export const htmlElements: Readonly<HtmlElementType> = {
@@ -66,8 +69,11 @@ export const htmlElements: Readonly<HtmlElementType> = {
   productDisplayElement: document.getElementsByClassName(
     "all-products"
   )[0] as HTMLElement,
-  searchInputElement: document.getElementsByClassName(
+  searchNameElement: document.getElementsByClassName(
     "search-product-name"
+  )[0] as HTMLInputElement,
+  searchDescriptionElement: document.getElementsByClassName(
+    "search-product-description"
   )[0] as HTMLInputElement,
   displayImageElement: document.getElementsByClassName(
     "product-image"
@@ -84,4 +90,10 @@ export const htmlElements: Readonly<HtmlElementType> = {
   editButton: document.getElementsByClassName(
     "edit-current-product"
   )[0] as HTMLAnchorElement,
+  sortOrderElement: document.getElementsByClassName(
+    "sort-order-dropdown"
+  )[0] as HTMLSelectElement,
+  sortByElement: document.getElementsByClassName(
+    "sort-by-dropdown"
+  )[0] as HTMLSelectElement,
 };

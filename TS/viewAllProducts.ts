@@ -1,53 +1,133 @@
 import { ProductBody, htmlElements } from "./commonUsedTypeInterface";
 import { getRequestDataFromAPI } from "./getDataFromAPI";
+import {
+  searchProductDescription,
+  searchProductName,
+} from "./searchingFunctionality";
+import {
+  sortByNameHL,
+  sortByPriceHL,
+  sortByPriceLH,
+  sortByNameLH,
+} from "./sortingFunctions";
 
-class ViewProducts {
+export class ViewProducts {
+  throttleLoad: Function = () => {};
+  productArray = new Set<ProductBody>([]);
+
   constructor(allProducts: ProductBody[]) {
     this.viewAllProducts(allProducts);
-    document
-      .getElementsByClassName("sort-by-name")[0]
-      .addEventListener("click", () => {
-        this.sortByName();
-      });
+    this.initialiseEventListner(allProducts);
+    htmlElements.searchNameElement.value = "";
+    htmlElements.searchDescriptionElement.value = "";
+    this.throttleLoad = this.throttle.call(this, this.handleScroll, 3000);
+  }
 
-    document
-      .getElementsByClassName("sort-by-pricelh")[0]
-      .addEventListener("click", () => {
-        this.sortByPriceLH();
-      });
-
-    document
-      .getElementsByClassName("sort-by-pricehl")[0]
-      .addEventListener("click", () => {
-        this.sortByPriceHL();
-      });
-
-    htmlElements.searchInputElement.value = "";
-    htmlElements.searchInputElement.addEventListener("input", (event) => {
-      this.debounceSearchProduct(event, allProducts, 1000);
+  initialiseEventListner(allProducts: ProductBody[]) {
+    htmlElements.sortByElement.addEventListener("change", (event) => {
+      if ("value" in event.target! && event.target.value === "name") {
+        if (
+          "value" in htmlElements.sortOrderElement &&
+          htmlElements.sortOrderElement.value === "Descending"
+        ) {
+          sortByNameHL.call(this, this.productArray);
+        } else {
+          sortByNameLH.call(this, this.productArray);
+        }
+      } else if ("value" in event.target! && event.target.value === "price") {
+        if (
+          "value" in htmlElements.sortOrderElement &&
+          htmlElements.sortOrderElement.value === "Descending"
+        ) {
+          sortByPriceHL.call(this, this.productArray);
+        } else {
+          sortByPriceLH.call(this, this.productArray);
+        }
+      } else {
+        htmlElements.productDisplayElement.textContent = "";
+        this.viewAllProducts([...this.productArray]);
+      }
     });
+
+    htmlElements.sortOrderElement.addEventListener("change", (event) => {
+      if ("value" in event.target! && event?.target.value === "Descending") {
+        if (
+          "value" in htmlElements.sortByElement &&
+          htmlElements.sortByElement.value === "name"
+        ) {
+          sortByNameHL.call(this, this.productArray);
+        } else if (
+          "value" in htmlElements.sortByElement &&
+          htmlElements.sortByElement.value === "price"
+        ) {
+          sortByPriceHL.call(this, this.productArray);
+        }
+      } else {
+        if (
+          "value" in htmlElements.sortByElement &&
+          htmlElements.sortByElement.value === "name"
+        ) {
+          sortByNameLH.call(this, this.productArray);
+        } else if (
+          "value" in htmlElements.sortByElement &&
+          htmlElements.sortByElement.value === "price"
+        ) {
+          sortByPriceLH.call(this, this.productArray);
+        }
+      }
+    });
+
+    htmlElements.searchDescriptionElement.addEventListener("input", (event) => {
+      this.debounceSearchProductDescription(
+        event,
+        [...this.productArray],
+        1000
+      );
+    });
+
+    htmlElements.searchNameElement.addEventListener("input", (event) => {
+      this.debounceSearchProductName(event, [...this.productArray], 1000);
+    });
+
     //added for infinite scrolling
-    window.addEventListener("scroll", () => this.handleScroll());
+    document.addEventListener("scroll", () => {
+      if (
+        htmlElements.productDisplayElement.scrollHeight - window.scrollY <
+        1200
+      ) {
+        this.throttleLoad();
+      }
+    });
+  }
+
+  throttle(func: Function, duration: number) {
+    let flag = true;
+
+    return (...args: any[]) => {
+      if (flag) {
+        func.call(this, ...args);
+        flag = false;
+        setTimeout(() => {
+          flag = true;
+        }, duration);
+      }
+    };
   }
 
   //added to check if the user has reached to end of the page to induce infinite scrolling
   async handleScroll() {
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const pageHeight = document.documentElement.scrollHeight;
-
-    if (scrollPosition >= pageHeight - 300) {
-      try {
-        const result = await getRequestDataFromAPI();
-
-        this.viewAllProducts(result);
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      const result = await getRequestDataFromAPI();
+      if (result.length === 0) return;
+      console.log(result);
+      this.viewAllProducts(result)!;
+    } catch (err) {
+      console.log(err);
     }
   }
 
   //added to induce debouncing
-  debounceSearchProduct(
+  debounceSearchProductDescription(
     event: Event,
     allProducts: ProductBody[],
     timer: number
@@ -56,83 +136,30 @@ class ViewProducts {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(() => {
-      this.searchProduct(event, allProducts);
+      searchProductDescription.call(this, event, allProducts);
     }, timer);
   }
 
-  //added to induce the search functionality
-  searchProduct(event: Event, allProducts: ProductBody[]) {
-    console.log("hello");
-    let searchedInput: string = "";
+  //added to induce debouncing
+  debounceSearchProductName(
+    event: Event,
+    allProducts: ProductBody[],
+    timer: number
+  ) {
+    let debounceTimer;
+    clearTimeout(debounceTimer);
 
-    if ("value" in event.target! && typeof event.target.value === "string")
-      searchedInput = event.target.value;
-
-    if (searchedInput === "") {
-      htmlElements.productDisplayElement.innerHTML = "";
-
-      this.viewAllProducts(allProducts);
-    }
-    allProducts = allProducts.filter((product) => {
-      return product.title.toLowerCase().includes(searchedInput.toLowerCase());
-    });
-    if (allProducts.length === 0) {
-      document.getElementsByClassName("all-products")[0].innerHTML =
-        "<b> No Products found</b>";
-    } else {
-      htmlElements.productDisplayElement.innerHTML = "";
-
-      this.viewAllProducts(allProducts);
-    }
-  }
-
-  //added to induce sorting functionality
-  async sortByPriceLH() {
-    let productArray: ProductBody[] = [];
-    try {
-      const data = await getRequestDataFromAPI();
-
-      productArray = data;
-    } catch (err) {
-      console.log(err);
-    }
-
-    productArray = productArray.sort((a, b) => a.price - b.price);
-    htmlElements.productDisplayElement.innerHTML = "";
-    this.viewAllProducts(productArray);
-  }
-
-  async sortByPriceHL() {
-    let productArray: ProductBody[] = [];
-    try {
-      const data = await getRequestDataFromAPI();
-
-      productArray = data;
-    } catch (err) {
-      console.log(err);
-    }
-    productArray = productArray.sort((a, b) => b.price - a.price);
-    htmlElements.productDisplayElement.innerHTML = "";
-    this.viewAllProducts(productArray);
-  }
-
-  async sortByName() {
-    let productArray: ProductBody[] = [];
-    try {
-      const data = await getRequestDataFromAPI();
-      productArray = data;
-    } catch (err) {
-      console.log(err);
-    }
-
-    productArray = productArray.sort((a, b) => a.title.localeCompare(b.title));
-    htmlElements.productDisplayElement.innerHTML = "";
-    this.viewAllProducts(productArray);
+    debounceTimer = setTimeout(() => {
+      searchProductName.call(this, event, allProducts);
+    }, timer);
   }
 
   //added to display the passed products array as set of cards so that user can view them
   async viewAllProducts(allProducts: ProductBody[]) {
-    if (allProducts.length === 0) {
+    if (
+      allProducts.length === 0 &&
+      htmlElements.productDisplayElement.textContent === ""
+    ) {
       htmlElements.productDisplayElement.innerHTML += `<b>No Products Yet</b>`;
       return;
     }
@@ -140,7 +167,7 @@ class ViewProducts {
     let htmlcode = "";
     allProducts.forEach((product) => {
       let productObj: ProductBody = product;
-
+      this.productArray.add(productObj);
       htmlcode += `
             <a class = "text-decoration-none text-dark" href = "./viewProduct.html?productID=${
               productObj[`id`]

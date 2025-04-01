@@ -45,47 +45,52 @@
                 >Add Products</a
               >
             </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+            <li class="nav-item dropdown me-2">
+              <select
+                class="form-select sort-by-dropdown"
+                aria-label="Default select example"
               >
-                Sort By
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item sort-by-name" href="#">Name</a></li>
-                <li>
-                  <a class="dropdown-item sort-by-pricelh" href="#"
-                    >Price(Low -> High)</a
-                  >
-                </li>
+                <option selected>Sort By</option>
+                <option value="none">None</option>
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+              </select>
+            </li>
 
-                <li>
-                  <a class="dropdown-item sort-by-pricehl" href="#"
-                    >Price(High -> Low)</a
-                  >
-                </li>
-              </ul>
+            <li class="nav-item dropdown me-2">
+              <select
+                class="form-select sort-order-dropdown"
+                aria-label="Default select example"
+              >
+                <option selected>Order By</option>
+                <option value="Ascending">Ascending</option>
+                <option value="Descending">Descending</option>
+              </select>
             </li>
           </ul>
 
           <input
             class="form-control me-2 w-25 search-product-name"
             type="search"
-            placeholder="Search"
+            placeholder="Search Title"
+            aria-label="Search"
+          />
+
+          <input
+            class="form-control me-2 w-25 search-product-description"
+            type="search"
+            placeholder="Search Description"
             aria-label="Search"
           />
         </div>
       </div>
     </nav>
+
     <!--List of products displayed from backend-->
     <div
-      class="all-products d-flex flex-wrap overflow-auto justify-content-center justify-content-lg-start flex-grow-1 mt-4"
+      class="all-products d-flex flex-wrap overflow-auto justify-content-center flex-grow-1 mt-4"
     ></div>
+
     <script>
       var exports = {};
     </script>
