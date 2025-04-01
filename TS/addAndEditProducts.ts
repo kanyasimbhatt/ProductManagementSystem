@@ -195,8 +195,6 @@ class Products {
 
   //added to handle put request when user wants to edit data
   async editProducts(productID: string) {
-    console.log(this.data.image);
-
     await fetch(
       `https://json-server-backend-for-crud-application.onrender.com/products/${productID}`,
       {

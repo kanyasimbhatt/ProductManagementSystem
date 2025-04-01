@@ -8,7 +8,6 @@ export function searchProductName(
   event: Event,
   allProducts: ProductBody[]
 ) {
-  console.log("hello");
   let searchedInput: string = "";
 
   if ("value" in event.target! && typeof event.target.value === "string")
@@ -53,8 +52,6 @@ export function searchProductDescription(
       .toLowerCase()
       .includes(searchedInput.toLowerCase());
   });
-
-  console.log(allProducts);
 
   if (allProducts.length === 0) {
     document.getElementsByClassName("all-products")[0].innerHTML =

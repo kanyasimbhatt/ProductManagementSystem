@@ -119,7 +119,6 @@ export class ViewProducts {
     try {
       const result = await getRequestDataFromAPI();
       if (result.length === 0) return;
-      console.log(result);
       this.viewAllProducts(result)!;
     } catch (err) {
       console.log(err);
