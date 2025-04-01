@@ -27,7 +27,7 @@
 
 #### Screenshots:
 
-![screenshot of project](./images/s2.png)
+![screenshot of project](./images/s9.png)
 ![screenshot of project](./images/s3.png)
 ![screenshot of project](./images/s4.png)
 ![screenshot of project](./images/s5.png)
@@ -37,6 +37,6 @@
 
 #### To experience the website kindly visit
 
-https://67e6905abe5b2104fe06a785--sweet-cascaron-6c84c2.netlify.app/viewallproducts
+https://delightful-kashata-b0aeea.netlify.app/viewallproducts
 
 #### THANK YOU FOR VISITING
