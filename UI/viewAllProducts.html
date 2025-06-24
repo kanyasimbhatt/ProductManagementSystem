@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="../CSS/viewAllProducts.css" />
+  </head>
+  <body>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="./viewAllProducts.html"
+          >Product Management System</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="./addAndEditProducts.html"
+                >Add Products</a
+              >
+            </li>
+            <li class="nav-item dropdown me-2">
+              <select
+                class="form-select sort-by-dropdown"
+                aria-label="Default select example"
+              >
+                <option selected>Sort By</option>
+                <option value="none">None</option>
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+              </select>
+            </li>
+
+            <li class="nav-item dropdown me-2">
+              <select
+                class="form-select sort-order-dropdown"
+                aria-label="Default select example"
+              >
+                <option selected>Order By</option>
+                <option value="Ascending">Ascending</option>
+                <option value="Descending">Descending</option>
+              </select>
+            </li>
+          </ul>
+
+          <input
+            class="form-control me-2 w-25 search-product-name"
+            type="search"
+            placeholder="Search Title"
+            aria-label="Search"
+          />
+
+          <input
+            class="form-control me-2 w-25 search-product-description"
+            type="search"
+            placeholder="Search Description"
+            aria-label="Search"
+          />
+        </div>
+      </div>
+    </nav>
+
+    <!--List of products displayed from backend-->
+    <div
+      class="all-products d-flex flex-wrap overflow-auto justify-content-center flex-grow-1 mt-4"
+    ></div>
+
+    <script>
+      var exports = {};
+    </script>
+    <script type="module" src="../TS/viewAllProducts.ts"></script>
+  </body>
+</html>
